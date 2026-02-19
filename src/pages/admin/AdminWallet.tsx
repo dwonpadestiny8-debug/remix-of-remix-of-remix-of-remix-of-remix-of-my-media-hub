@@ -91,7 +91,7 @@ const AdminWallet = () => {
             <span className="text-xs text-muted-foreground">Available Balance</span>
           </div>
           <p className="text-2xl font-black text-foreground">
-            {loading ? <Loader2 className="w-5 h-5 animate-spin text-primary" /> : `${balance.toLocaleString()} UGX`}
+            {loading ? <Loader2 className="w-5 h-5 animate-spin text-primary" /> : `${(balance ?? 0).toLocaleString()} UGX`}
           </p>
         </div>
         <div className="bg-card border border-border rounded-xl p-5">
@@ -157,7 +157,7 @@ const AdminWallet = () => {
                 <tr key={tx.internal_reference || tx.id || i} className="border-b border-border last:border-0">
                   <td className="p-3 text-foreground text-xs font-mono">{tx.internal_reference || tx.id || "—"}</td>
                   <td className="p-3 text-muted-foreground">{tx.msisdn || "—"}</td>
-                  <td className="p-3 text-foreground font-bold">{(tx.amount || 0).toLocaleString()} UGX</td>
+                  <td className="p-3 text-foreground font-bold">{(tx.amount ?? 0).toLocaleString()} UGX</td>
                   <td className="p-3">
                     <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${tx.status === "success" ? "bg-primary/20 text-primary" : "bg-muted text-muted-foreground"}`}>
                       {tx.status || "unknown"}

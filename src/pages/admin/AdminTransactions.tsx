@@ -3,7 +3,7 @@ import { Loader2 } from "lucide-react";
 
 const AdminTransactions = () => {
   const { transactions, loading } = useTransactions();
-  const total = transactions.filter(t => t.status === "completed").reduce((s, t) => s + t.amount, 0);
+  const total = transactions.filter(t => t.status === "completed").reduce((s, t) => s + (t.amount ?? 0), 0);
 
   return (
     <div>
@@ -32,8 +32,8 @@ const AdminTransactions = () => {
                   <td className="p-3 text-foreground">{tx.userName}</td>
                   <td className="p-3 text-muted-foreground capitalize">{tx.type.replace(/_/g, " ")}</td>
                   <td className="p-3 text-muted-foreground">{tx.plan || "—"}</td>
-                  <td className="p-3 text-foreground">{tx.amount.toLocaleString()} UGX</td>
-                  <td className="p-3 text-muted-foreground">{new Date(tx.date).toLocaleDateString()}</td>
+                  <td className="p-3 text-foreground">{(tx.amount ?? 0).toLocaleString()} UGX</td>
+                  <td className="p-3 text-muted-foreground">{tx.date ? new Date(tx.date).toLocaleDateString() : "—"}</td>
                   <td className="p-3">
                     <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${tx.status === "completed" ? "bg-primary/20 text-primary" : "bg-badge-hot/20 text-badge-hot"}`}>
                       {tx.status}
