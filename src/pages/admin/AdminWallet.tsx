@@ -28,15 +28,17 @@ const AdminWallet = () => {
         fetchWalletBalance(),
         fetchBackendTransactions(),
       ]);
+      console.log("Balance API response:", JSON.stringify(balRes));
+      console.log("Transactions API response:", JSON.stringify(txRes));
       if (balRes.success && balRes.relworx) {
-        setBalance(balRes.relworx.balance);
+        setBalance(balRes.relworx.balance ?? 0);
       } else {
-        setError(balRes.message || (balRes.relworx as any)?.message || JSON.stringify(balRes));
+        setError("Balance error: " + (balRes.relworx?.message || balRes.message || JSON.stringify(balRes)));
       }
       if (txRes.success && txRes.relworx) {
         setTransactions(txRes.relworx.transactions || []);
-      } else if (!error) {
-        setError(txRes.message || (txRes.relworx as any)?.message || JSON.stringify(txRes));
+      } else {
+        setError(prev => (prev ? prev + " | " : "") + "Transactions error: " + (txRes.relworx?.message || txRes.message || JSON.stringify(txRes)));
       }
     } catch (e: any) {
       const msg = e?.message || "Failed to load wallet data";
