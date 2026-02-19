@@ -63,40 +63,53 @@ export interface TransactionsResponse {
 }
 
 export async function fetchWalletBalance(): Promise<WalletBalanceResponse> {
+  console.log("[payments] fetchWalletBalance →", `${API_BASE}/wallet/balance`);
   const res = await fetch(`${API_BASE}/wallet/balance`);
   const data = await res.json();
+  console.log("[payments] fetchWalletBalance response:", JSON.stringify(data));
   if (!res.ok) throw new Error(data?.relworx?.message || data?.message || JSON.stringify(data));
   return data;
 }
 
 export async function fetchBackendTransactions(): Promise<TransactionsResponse> {
+  console.log("[payments] fetchBackendTransactions →", `${API_BASE}/transactions`);
   const res = await fetch(`${API_BASE}/transactions`);
   const data = await res.json();
+  console.log("[payments] fetchBackendTransactions response:", JSON.stringify(data));
   if (!res.ok) throw new Error(data?.relworx?.message || data?.message || JSON.stringify(data));
   return data;
 }
 
 export async function initiateDeposit(msisdn: string, amount: number, description: string): Promise<DepositResponse> {
+  console.log("[payments] initiateDeposit →", { msisdn, amount, description });
   const res = await fetch(`${API_BASE}/request-payment`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ msisdn, amount, description }),
   });
-  return res.json();
+  const data = await res.json();
+  console.log("[payments] initiateDeposit response:", JSON.stringify(data));
+  return data;
 }
 
 export async function initiateWithdraw(msisdn: string, amount: number, description: string) {
+  console.log("[payments] initiateWithdraw →", { msisdn, amount, description });
   const res = await fetch(`${API_BASE}/send-payment`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ msisdn, amount, description }),
   });
-  return res.json();
+  const data = await res.json();
+  console.log("[payments] initiateWithdraw response:", JSON.stringify(data));
+  return data;
 }
 
 export async function checkStatus(internalReference: string): Promise<StatusResponse> {
+  console.log("[payments] checkStatus →", internalReference);
   const res = await fetch(`${API_BASE}/request-status?internal_reference=${encodeURIComponent(internalReference)}`);
-  return res.json();
+  const data = await res.json();
+  console.log("[payments] checkStatus response:", JSON.stringify(data));
+  return data;
 }
 
 export function pollPaymentStatus(
