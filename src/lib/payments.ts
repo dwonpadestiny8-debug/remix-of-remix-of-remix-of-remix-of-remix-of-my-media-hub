@@ -29,9 +29,11 @@ interface StatusResponse {
 
 export interface WalletBalanceResponse {
   success: boolean;
+  message?: string;
   relworx?: {
     success: boolean;
     balance: number;
+    message?: string;
   };
 }
 
@@ -48,6 +50,7 @@ export interface BackendTransaction {
 
 export interface TransactionsResponse {
   success: boolean;
+  message?: string;
   relworx?: {
     success: boolean;
     current_page: number;
@@ -55,17 +58,22 @@ export interface TransactionsResponse {
     total_pages: number;
     total_count: number;
     transactions: BackendTransaction[];
+    message?: string;
   };
 }
 
 export async function fetchWalletBalance(): Promise<WalletBalanceResponse> {
   const res = await fetch(`${API_BASE}/wallet/balance`);
-  return res.json();
+  const data = await res.json();
+  if (!res.ok) throw new Error(data?.relworx?.message || data?.message || JSON.stringify(data));
+  return data;
 }
 
 export async function fetchBackendTransactions(): Promise<TransactionsResponse> {
   const res = await fetch(`${API_BASE}/transactions`);
-  return res.json();
+  const data = await res.json();
+  if (!res.ok) throw new Error(data?.relworx?.message || data?.message || JSON.stringify(data));
+  return data;
 }
 
 export async function initiateDeposit(msisdn: string, amount: number, description: string): Promise<DepositResponse> {

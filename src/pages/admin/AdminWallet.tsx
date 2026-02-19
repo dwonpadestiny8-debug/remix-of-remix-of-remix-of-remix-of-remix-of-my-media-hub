@@ -14,6 +14,7 @@ const AdminWallet = () => {
   const [balance, setBalance] = useState<number>(0);
   const [transactions, setTransactions] = useState<BackendTransaction[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const [withdrawAmount, setWithdrawAmount] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
@@ -21,6 +22,7 @@ const AdminWallet = () => {
 
   const loadData = async () => {
     setLoading(true);
+    setError(null);
     try {
       const [balRes, txRes] = await Promise.all([
         fetchWalletBalance(),
@@ -28,13 +30,19 @@ const AdminWallet = () => {
       ]);
       if (balRes.success && balRes.relworx) {
         setBalance(balRes.relworx.balance);
+      } else {
+        setError(balRes.message || (balRes.relworx as any)?.message || JSON.stringify(balRes));
       }
       if (txRes.success && txRes.relworx) {
         setTransactions(txRes.relworx.transactions || []);
+      } else if (!error) {
+        setError(txRes.message || (txRes.relworx as any)?.message || JSON.stringify(txRes));
       }
-    } catch (e) {
+    } catch (e: any) {
+      const msg = e?.message || "Failed to load wallet data";
       console.error("Failed to load wallet data", e);
-      toast({ title: "Failed to load wallet data", variant: "destructive" });
+      setError(msg);
+      toast({ title: "Failed to load wallet data", description: msg, variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -82,6 +90,14 @@ const AdminWallet = () => {
           <RefreshCw className={`w-3 h-3 ${loading ? "animate-spin" : ""}`} /> Refresh
         </button>
       </div>
+
+      {/* Error banner */}
+      {error && (
+        <div className="bg-destructive/10 border border-destructive/30 rounded-xl p-4 mb-6">
+          <p className="text-sm font-bold text-destructive mb-1">Backend Error</p>
+          <p className="text-xs text-destructive/80 font-mono break-all">{error}</p>
+        </div>
+      )}
 
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
